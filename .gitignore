@@ -7,8 +7,6 @@ __pycache__/
 
 # votre configuration et vos fichiers propres (recherches, logo, photos) :
 # ils ne partent pas dans le depot public
-/config/wall.json
-/config/local/
 
 # secrets de test
 .env

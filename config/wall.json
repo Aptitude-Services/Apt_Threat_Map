@@ -1,0 +1,44 @@
+{
+  "_lisez_moi": "Configuration du mur. Copiez ce fichier en config/wall.json (ignoré par git) et adaptez-le. Voir docs/ADAPTER.md.",
+
+  "app": {
+    "id": "soc_attack_wall",
+    "label": "Threat Map",
+    "version": "1.5.3",
+    "author": "SOC",
+    "roles_write": ["admin", "sc_admin"],
+    "roles_config": ["*"],
+    "check_for_updates": true
+  },
+
+  "page": {
+    "title": "Threat",
+    "subtitle": "Map",
+    "logo": "local/logo.png",
+    "accent": "#7fbc2a",
+    "map_home": { "lon": 6, "lat": 25, "zoom": 1.5 }
+  },
+
+  "sites": [
+    { "id": "AP1",      "label": "APTITUDE", "lat": 5.36933, "lon": -3.968128, "label_dir": [1, -1] }
+  ],
+  "default_site": "AP1",
+
+  "sources": [
+    { "id": "waf",  "label": "WAF",         "color": "#00a7eb", "search_file": "sources/demo/waf.spl",  "demo_weight": 55 },
+    { "id": "ids",  "label": "IDS",         "color": "#7770d5", "search_file": "sources/demo/ids.spl",  "demo_weight": 3, "priority": true },
+    { "id": "mail", "label": "Messagerie",  "color": "#00b891", "search_file": "sources/demo/mail.spl", "demo_weight": 20 },
+    { "id": "idp",  "label": "Identité",    "color": "#d0b8ff", "search_file": "sources/demo/idp.spl",  "demo_weight": 12 },
+    { "id": "vpn",  "label": "VPN",         "color": "#83e3c9", "search_file": "sources/demo/vpn.spl",  "demo_weight": 10, "lookback_minutes": 0 },
+    { "id": "bunkerweb", "label": "BunkerWeb", "color": "#4dd0e1", "search_file": "local/sources/bunkerweb.spl", "demo_weight": 0 }
+  ],
+
+  "origins": {
+    "exclude_countries": [],
+    "ranking_exclude_countries": [],
+    "masked_labels": ["Origine masquée", "Interne"]
+  },
+
+  "burst_cap": 20,
+  "summary_index": "summary"
+}
