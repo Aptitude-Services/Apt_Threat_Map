@@ -57,6 +57,72 @@ severity, signature, dest_host, action`. Le reste (géolocalisation,
 coordonnées des sites, normalisation) est ajouté par `build.py`. Voir
 [docs/ADAPTER.md](docs/ADAPTER.md) et [docs/CONTRAT.md](docs/CONTRAT.md).
 
+## Passer en production
+
+### Retirer les sources de démonstration
+
+L'appli est livrée avec 5 sources de démonstration (`waf`, `ids`, `mail`,
+`idp`, `vpn`) qui génèrent de fausses attaques toutes les 5 minutes. En
+production, retirez-les de `config/wall.json` : dans la liste `"sources"`,
+supprimez les blocs dont `search_file` commence par `sources/demo/`, puis
+reconstruisez le paquet. Elles ne seront alors jamais installées, y compris
+sur un nouveau serveur.
+
+Sur un Splunk déjà installé, on peut aussi les désactiver dans
+**Configuration > Sources d'attaque**. Ce réglage reste dans Splunk et ne
+suit pas un nouveau clone.
+
+### Des alertes de démonstration s'affichent encore après la désactivation
+
+Le mur compte **depuis minuit**. Les fausses attaques produites avant la
+désactivation restent dans les compteurs, les pays et les techniques jusqu'à
+minuit, puis disparaissent seules. Rechargez aussi la page (Ctrl+F5) : le flux
+« En direct » garde ses dernières lignes en mémoire.
+
+Pour vérifier qu'elles ne tournent plus (recherche Splunk, 15 dernières
+minutes) :
+
+```
+index=summary search_name=wall_* NOT meta=1 | stats count latest(_time) as dernier by search_name | convert ctime(dernier)
+```
+
+Seules vos vraies sources (`wall_bunkerweb`, `wall_utmstack`…) doivent
+apparaître. Sinon, vérifiez leur état :
+
+```
+| rest /servicesNS/-/soc_attack_wall/saved/searches search=wall_ | table title disabled is_scheduled
+```
+
+Pour repartir d'un mur vide sans attendre minuit, videz l'index `summary`.
+**La suppression est définitive** : tout l'historique du mur est effacé, les
+journaux bruts (`index=threatmap`) et les réglages sont conservés.
+
+```bash
+docker exec -u splunk soc-attack-wall-splunk /opt/splunk/bin/splunk stop
+docker exec -u splunk soc-attack-wall-splunk /opt/splunk/bin/splunk clean eventdata -index summary -f
+docker restart soc-attack-wall-splunk
+```
+
+### Quand faut-il reconstruire le paquet ?
+
+| Changement | Enregistré dans | Reconstruire ? |
+|---|---|---|
+| Interface de l'appli : sources, planning, analystes, sites, clients | Splunk (volumes Docker) | non, actif en 5 à 10 min |
+| `config/wall.json` : titre, logo, couleurs, sources livrées | le paquet | oui |
+| Code (`web/`, `splunk_app/src/`) | le paquet | oui |
+
+Pour reconstruire : augmentez `"version"` dans `config/wall.json`, mettez la
+même valeur dans `WALL_VERSION` de `.env`, puis :
+
+```bash
+python3 build.py && python3 docker/paquet.py
+docker compose up -d     # recree le conteneur ; un docker restart garderait l'ancienne version
+```
+
+Les réglages faits dans l'interface survivent aux redémarrages et aux mises à
+jour, mais pas à `docker compose down -v`, qui supprime les volumes. Ils ne
+sont pas dans le dépôt : sauvegardez les volumes Docker.
+
 ## Tests
 
 ```bash

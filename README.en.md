@@ -93,6 +93,70 @@ For logs spread over time, set `lookback_minutes` and keep only the batch with
 `| where _time >= $WINDOW_START$`. Full details, in French:
 [docs/CONTRAT.md](docs/CONTRAT.md).
 
+## Going to production
+
+### Remove the demo sources
+
+The app ships with 5 demo sources (`waf`, `ids`, `mail`, `idp`, `vpn`) that
+generate fake attacks every 5 minutes. In production, remove them from
+`config/wall.json`: in the `"sources"` list, delete the blocks whose
+`search_file` starts with `sources/demo/`, then rebuild the package. They will
+then never be installed, including on a new server.
+
+On a Splunk that is already installed, you can also disable them in
+**Configuration > Attack sources**. That setting stays in Splunk and does not
+follow a new clone.
+
+### Demo alerts still show after disabling them
+
+The wall counts **since midnight**. Fake attacks produced before disabling
+stay in the counters, countries and techniques until midnight, then go away on
+their own. Also reload the page (Ctrl+F5): the live feed keeps its last rows
+in memory.
+
+To check they no longer run (Splunk search, last 15 minutes):
+
+```
+index=summary search_name=wall_* NOT meta=1 | stats count latest(_time) as last by search_name | convert ctime(last)
+```
+
+Only your real sources (`wall_bunkerweb`, `wall_utmstack`...) should appear.
+Otherwise, check their state:
+
+```
+| rest /servicesNS/-/soc_attack_wall/saved/searches search=wall_ | table title disabled is_scheduled
+```
+
+To start from an empty wall without waiting for midnight, clear the `summary`
+index. **This is permanent**: the whole wall history is erased; raw logs
+(`index=threatmap`) and settings are kept.
+
+```bash
+docker exec -u splunk soc-attack-wall-splunk /opt/splunk/bin/splunk stop
+docker exec -u splunk soc-attack-wall-splunk /opt/splunk/bin/splunk clean eventdata -index summary -f
+docker restart soc-attack-wall-splunk
+```
+
+### When do you need to rebuild the package?
+
+| Change | Stored in | Rebuild? |
+|---|---|---|
+| App interface: sources, schedule, analysts, sites, clients | Splunk (Docker volumes) | no, live within 5-10 min |
+| `config/wall.json`: title, logo, colours, shipped sources | the package | yes |
+| Code (`web/`, `splunk_app/src/`) | the package | yes |
+
+To rebuild: bump `"version"` in `config/wall.json`, set the same value in
+`WALL_VERSION` in `.env`, then:
+
+```bash
+python3 build.py && python3 docker/paquet.py
+docker compose up -d     # recreates the container; docker restart would keep the old version
+```
+
+Settings made in the interface survive restarts and upgrades, but not
+`docker compose down -v`, which deletes the volumes. They are not in the
+repository: back up the Docker volumes.
+
 ## Tests
 
 ```bash
