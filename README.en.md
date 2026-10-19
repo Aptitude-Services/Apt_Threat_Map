@@ -1,6 +1,6 @@
-<img src="splunk_app/assets/static/icon-512.png" alt="App icon" width="96" align="right">
+<img src="docs/logo-aptitude.png" alt="Aptitude logo" width="96" align="right">
 
-# SOC Attack Wall
+# Aptitude Threat Map
 
 An attack wall for SOC rooms, hosted in **Splunk** (Cloud or Enterprise):
 live attack map, today's counters, feed of the latest events, on-duty team,
