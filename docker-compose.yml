@@ -3,7 +3,7 @@
 # 2. docker compose up -d       -> http://localhost:8000 (admin / votre mot de passe)
 #    Le service "builder" construit le paquet (build.py) avant le demarrage de Splunk :
 #    pas besoin de Python sur la machine.
-# Mise a jour apres un git pull : ./deploy.sh
+# Mise a jour apres un git pull : docker compose up -d --force-recreate
 # Brancher les sources : docs/INTEGRATIONS.md
 services:
   # Construit dist/soc_attack_wall.tgz et dist/threatmap_inputs.tgz a partir du depot, puis s'arrete.

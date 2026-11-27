@@ -104,7 +104,7 @@ cp templates/sources/bunkerweb_waf/source.spl config/local/sources/bunkerweb.spl
 4. Reconstruisez et réinstallez (le paquet est construit dans Docker) :
 
 ```bash
-./deploy.sh
+git pull && docker compose up -d --force-recreate
 ```
 
 ## 5. Vérifier sur le mur
@@ -148,7 +148,7 @@ recherche les regroupe par `unique_id` pour n'en compter qu'une.
 
 | Symptôme | Cause | Remède |
 |---|---|---|
-| BunkerWeb disparaît du mur après un redémarrage du conteneur | le conteneur réinstalle le paquet de la version notée à sa création (ici 1.3.0, sans BunkerWeb) | `./deploy.sh` après tout changement |
+| BunkerWeb disparaît du mur après un redémarrage du conteneur | le conteneur réinstalle le paquet de la version notée à sa création (ici 1.3.0, sans BunkerWeb) | `docker compose up -d --force-recreate` après tout changement |
 | BunkerWeb absent du panneau « Par source » alors que les journaux arrivent | aucune attaque comptée aujourd'hui, ou délai de 10 à 15 minutes | attendre le passage suivant du cumul |
 | Rien n'arrive dans `index=threatmap` | port 5514 fermé, ou `ERROR_LOG` non appliqué | pare-feu de la machine Splunk ; recharger BunkerWeb |
 | Le syslog en TCP ne répond pas juste après l'installation | l'entrée TCP n'écoute qu'après un redémarrage de Splunk | utiliser l'UDP, ou redémarrer Splunk une fois |

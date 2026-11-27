@@ -145,12 +145,12 @@ docker restart soc-attack-wall-splunk
 | `config/wall.json`: title, logo, colours, shipped sources | the package | yes |
 | Code (`web/`, `splunk_app/src/`) | the package | yes |
 
-To rebuild and reinstall after a `git pull`, run one script. The package is
+To rebuild and reinstall after a `git pull`, run one command. The package is
 built in Docker (`builder` service, no Python needed on the host) and the Splunk
 container is recreated to reinstall the app.
 
 ```bash
-./deploy.sh
+git pull && docker compose up -d --force-recreate
 ```
 
 Settings made in the interface survive restarts and upgrades, but not
