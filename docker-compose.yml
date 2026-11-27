@@ -1,18 +1,38 @@
 # Splunk Enterprise local, avec l'appli et les entrees de donnees installees au demarrage.
-# 1. python build.py ; python docker/paquet.py   -> dist/*.tgz
-# 2. renseignez .env (voir .env.example)
-# 3. docker compose up -d       -> http://localhost:8000 (admin / votre mot de passe)
+# 1. renseignez .env (voir .env.example)
+# 2. docker compose up -d       -> http://localhost:8000 (admin / votre mot de passe)
+#    Le service "builder" construit le paquet (build.py) avant le demarrage de Splunk :
+#    pas besoin de Python sur la machine.
+# Mise a jour apres un git pull : ./deploy.sh
 # Brancher les sources : docs/INTEGRATIONS.md
 services:
+  # Construit dist/soc_attack_wall.tgz et dist/threatmap_inputs.tgz a partir du depot, puis s'arrete.
+  builder:
+    image: python:3.12-slim
+    working_dir: /src
+    volumes:
+      - .:/src
+    command:
+      - sh
+      - -c
+      - |
+        set -e
+        rm -f dist/soc_attack_wall-*.tgz
+        python build.py
+        python docker/paquet.py
+        cp dist/soc_attack_wall-*.tgz dist/soc_attack_wall.tgz
   splunk:
     image: splunk/splunk:latest
     container_name: soc-attack-wall-splunk
+    depends_on:
+      builder:
+        condition: service_completed_successfully
     environment:
       SPLUNK_START_ARGS: ${SPLUNK_START_ARGS:?acceptez la licence Splunk dans .env}
       SPLUNK_GENERAL_TERMS: ${SPLUNK_GENERAL_TERMS:?acceptez les conditions generales Splunk dans .env}
       SPLUNK_PASSWORD: ${SPLUNK_PASSWORD:?definissez SPLUNK_PASSWORD dans .env}
       SPLUNK_HEC_TOKEN: ${SPLUNK_HEC_TOKEN:?definissez SPLUNK_HEC_TOKEN dans .env}
-      SPLUNK_APPS_URL: /dist/soc_attack_wall-${WALL_VERSION:-1.5.2}.tgz,/dist/threatmap_inputs.tgz
+      SPLUNK_APPS_URL: /dist/soc_attack_wall.tgz,/dist/threatmap_inputs.tgz
       TZ: ${TZ:-Africa/Abidjan}
     ports:
       - "8000:8000"       # interface web

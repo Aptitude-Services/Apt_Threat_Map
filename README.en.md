@@ -145,12 +145,12 @@ docker restart soc-attack-wall-splunk
 | `config/wall.json`: title, logo, colours, shipped sources | the package | yes |
 | Code (`web/`, `splunk_app/src/`) | the package | yes |
 
-To rebuild: bump `"version"` in `config/wall.json`, set the same value in
-`WALL_VERSION` in `.env`, then:
+To rebuild and reinstall after a `git pull`, run one script. The package is
+built in Docker (`builder` service, no Python needed on the host) and the Splunk
+container is recreated to reinstall the app.
 
 ```bash
-python3 build.py && python3 docker/paquet.py
-docker compose up -d     # recreates the container; docker restart would keep the old version
+./deploy.sh
 ```
 
 Settings made in the interface survive restarts and upgrades, but not
