@@ -175,7 +175,7 @@ body.debug #gstat .dbg{display:inline}
 .row .bar>i{display:block;height:100%;background:var(--encre-2);transition:width .6s ease}
 
 /* ---- bas : activite horaire et flux en direct ---- */
-#bt{grid-area:bt;display:grid;grid-template-columns:400px 1fr;gap:14px;min-height:0}
+#bt{grid-area:bt;display:grid;grid-template-columns:clamp(240px,21vw,420px) minmax(0,1fr);gap:14px;min-height:0}
 #spark{height:100%;width:100%;display:block}
 /* frise de la journee : survol, clic pour relire une tranche */
 #tl{position:relative;height:calc(100% - 52px)}
@@ -221,8 +221,12 @@ body.debug #gstat .dbg{display:inline}
   border-bottom:1px solid var(--trait);white-space:nowrap}
 #feed td{padding:4px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--encre-2)}
 #feed td:nth-child(4),#feed td:nth-child(6),#feed td.cl{color:var(--encre)}
-#feed col.c-t{width:5.4em}#feed col.c-s{width:7.2em}#feed col.c-v{width:7em}#feed col.c-ip{width:9.4em}
-#feed col.c-p{width:9.4em}#feed.periode col.c-t{width:7.6em}#feed col.c-sv{width:9.5em}#feed col.c-cl{width:8em}#feed col.c-a{width:5.6em}
+#feed col.c-t{width:5.4em}#feed col.c-s{width:7.2em}#feed col.c-v{width:7em}#feed col.c-ip{width:8.8em}
+#feed col.c-p{width:8.6em}#feed.periode col.c-t{width:7.2em}#feed col.c-sv{width:8.5em}#feed col.c-cl{width:7em}#feed col.c-a{width:5.2em}
+/* ecran moyen (ou mis a l'echelle, ex. 150 %) : le flux cede le nom du pays (drapeau
+   seul, nom au survol) et la colonne Action pour garder Technique, Cible et Service lisibles */
+@media (max-width:1500px){#feed col.c-p{width:3.2em}#feed .pn{display:none}
+  #feed col.c-a{width:0}#feed th:nth-child(10),#feed td:nth-child(10){display:none}}
 #feed td.cl .cl-vide{color:var(--encre-3);font-style:italic}
 #feed .cl-tag{cursor:pointer;border-bottom:1px dotted var(--encre-3)}
 #feed .cl-tag:hover{border-bottom-color:currentColor}
