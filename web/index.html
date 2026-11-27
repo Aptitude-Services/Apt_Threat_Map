@@ -222,7 +222,7 @@ body.debug #gstat .dbg{display:inline}
 #feed td{padding:4px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--encre-2)}
 #feed td:nth-child(4),#feed td:nth-child(6),#feed td.cl{color:var(--encre)}
 #feed col.c-t{width:5.4em}#feed col.c-s{width:7.2em}#feed col.c-v{width:7em}#feed col.c-ip{width:9.4em}
-#feed col.c-p{width:10em}#feed col.c-sv{width:11em}#feed col.c-cl{width:8em}#feed col.c-a{width:5.6em}
+#feed col.c-p{width:10em}#feed.periode col.c-t{width:7.6em}#feed col.c-sv{width:11em}#feed col.c-cl{width:8em}#feed col.c-a{width:5.6em}
 #feed td.cl .cl-vide{color:var(--encre-3);font-style:italic}
 #feed .cl-tag{cursor:pointer;border-bottom:1px dotted var(--encre-3)}
 #feed .cl-tag:hover{border-bottom-color:currentColor}
@@ -1160,6 +1160,7 @@ function feed(){
     return [...g.values()];
   };
   if (FEED_PAUSE) return;                        // on lit la liste : pas de saut
+  $("feed").classList.toggle("periode", !!PERIODE);
   const tri = (REPLAY ? RJ_FEED : FEEDBUF)
     .filter(e => (!FILTRE || e.tech === FILTRE) && (!FILTRE_CLIENT || e.client === FILTRE_CLIENT)).sort(desc);
   const ids  = REPLAY ? [] : grouper(tri.filter(e => PRIO.has(e.tech) && e.t >= recent)).slice(0, nPin);
@@ -1174,7 +1175,9 @@ function feed(){
     if (feedKey === vk) return;
     feedKey = vk; feedPrev = new Set();
     $("feedb").innerHTML = '<tr><td colspan="10" class="feed-vide">' +
-      (FILTRE ? "Aucune attaque récente pour cette source." : "Aucune attaque pour l'instant.") + '</td></tr>';
+      (PERIODE && FEED_PER_VIDE ? "Liste des attaques indisponible pour cette période (les compteurs sont corrects). Console du navigateur : F12."
+        : PERIODE ? "Aucune attaque dans l'échantillon de la période" + (FILTRE ? " pour cette source (retirez le filtre ✕)." : ".")
+        : FILTRE ? "Aucune attaque récente pour cette source." : "Aucune attaque pour l'instant.") + '</td></tr>';
     return;
   }
 
@@ -1187,7 +1190,8 @@ function feed(){
   feedKey = k;
 
   $("feedb").innerHTML = rows.map(({e, n}, i) => {
-    const ts = new Date(e.t).toLocaleTimeString("fr-FR", {hour12:false});
+    const ts = PERIODE ? new Date(e.t).toLocaleString("fr-FR", {day:"2-digit", month:"2-digit", hour:"2-digit", minute:"2-digit", hour12:false})
+                       : new Date(e.t).toLocaleTimeString("fr-FR", {hour12:false});
     const ac = e.action === "blocked" ? "blk" : e.action === "allowed" ? "alw" : "alr";
     const cls = (i < ids.length ? "pin " : "") + (feedPrev.has(keys[i]) ? "" : "nw");
     const sev = esc(e.sev);
@@ -1331,6 +1335,7 @@ let REPLAY = false, RJ_FEED = [];              // relecture en cours (voir plus 
 /* mode periode : le mur montre le bilan d'une periode passee (24 h, 7 j, 30 j)
    au lieu du direct depuis minuit. L'alimentation en direct est alors mise en
    pause, les panneaux sont remplis par SRC.periode(), la carte est figee. */
+let FEED_PER_VIDE = false;
 let PERIODE = null, PE_ATTENTE = "jour", COURBE_PER = null, COURBE_JOUR = false, SAUVE = null;
 function queueArcs(list){
   if (REPLAY || PERIODE) return;                // la carte montre la relecture ou une periode figee
@@ -1536,6 +1541,7 @@ function peCharger(cleBouton, earliest, latest, label, parJour){
     COURBE_PER = bilan.courbe || []; COURBE_JOUR = parJour;
     Object.assign(DAILY, { total:0, blocked:0, crit:0, sev:{}, cty:{}, sig:{}, tech:{}, site:{}, hour:{}, m5:{} }, bilan.dims);
     FEEDBUF.length = 0; (bilan.feed || []).forEach(e => { e._fed = true; FEEDBUF.push(e); });
+    FEED_PER_VIDE = FEEDBUF.length === 0 && DAILY.total > 0;   // compteurs sans liste : on le dit
     arcs.length = 0; pending.length = 0;           // fige la carte
     libPeriode(label); paint();
   }).catch(e => { if (PE_ATTENTE === tok && $("gcap")) $("gcap").textContent = "Période indisponible : " + (e && e.message || e); });

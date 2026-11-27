@@ -375,7 +375,13 @@ window.WALL_SOURCE = {
         });
       },
       function () {
-        return unShot(base + ' | sort 0 - _time | head 300').then(function (rows) { out.feed = rows.map(versEvenement); });
+        // champs explicites (comme la relecture) : pas de _raw dans la reponse ; l'index summary
+        // rend deja les plus recents d'abord, le tri n'est qu'une garantie
+        return unShot(base + ' | sort 0 -t | head 300 | fields t Country src_lat src_lon src_ip dc dst_lat dst_lon source_tech severity signature dest_host service client action')
+          .then(function (rows) {
+            out.feed = rows.map(versEvenement);
+            if (!out.feed.length) console.warn("wall: empty event sample for period, total counted = " + out.dims.total);
+          });
       }
     ];
     // en serie : le quota de recherches simultanees du compte d'affichage est limite
