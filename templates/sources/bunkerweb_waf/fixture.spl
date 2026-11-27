@@ -13,6 +13,7 @@
          i == 6, "Warning. Matched \"Operator PmFromFile\" against variable ARGS:file [id \"930120\"] [msg \"OS File Access Attempt\"] [severity \"2\"] [tag \"attack-lfi\"]",
          i == 7, "Warning. Matched \"Operator Rx\" against variable ARGS:file [id \"930110\"] [msg \"Path Traversal Attack (/../) or (/.../)\"] [severity \"2\"] [tag \"attack-lfi\"]",
          true(), "Access denied with code 403 (phase 2). Matched \"Operator Ge' with parameter 5' against variable TX:BLOCKING_INBOUND_ANOMALY_SCORE' (Value: '30' ) [id \"949110\"] [msg \"\"] [severity \"0\"] [tag \"anomaly-evaluation\"] [tag \"OWASP_CRS\"]"),
+       chemin = if(i <= 2, "/login.php?id=1", "/"),
        entete = if(match(detail, "^Access denied"), "[client " . ip . "] ", ""),
-       _raw = "Oct  5 09:00:00 waf bunkerweb: 2026/10/05 09:00:00 [error] 77#77: *12 " . entete . "ModSecurity: " . detail . " [hostname \"www.example.org\"] [uri \"/\"] [unique_id \"" . req . "\"] [ref \"\"], client: " . ip . ", server: www.example.org, request: \"GET / HTTP/1.1\", host: \"www.example.org\""
-| fields - ip, req, detail, entete
+       _raw = "Oct  5 09:00:00 waf bunkerweb: 2026/10/05 09:00:00 [error] 77#77: *12 " . entete . "ModSecurity: " . detail . " [hostname \"www.example.org\"] [uri \"/\"] [unique_id \"" . req . "\"] [ref \"\"], client: " . ip . ", server: www.example.org, request: \"GET " . chemin . " HTTP/1.1\", host: \"www.example.org\""
+| fields - ip, req, detail, entete, chemin

@@ -149,6 +149,7 @@ html,body{height:100%;background:var(--nuit);color:var(--encre);font-family:var(
 #sevbar .keys div{white-space:nowrap}
 #sevbar .keys div{display:flex;align-items:baseline;gap:6px;font-size:clamp(11px,.72vw,14px);color:var(--encre-2)}
 #sevbar .keys b{font-weight:600;color:var(--encre)}
+#sevbar .keys .pc{color:var(--encre-3)}
 #sevbar .keys em{width:8px;height:8px;border-radius:1px;align-self:center;flex:0 0 auto}
 
 /* ---- carte ---- */
@@ -211,7 +212,7 @@ body.debug #gstat .dbg{display:inline}
   border:1px solid var(--trait);border-radius:2px;background:transparent;color:var(--encre-2);cursor:pointer}
 .ttl .oeil:hover{color:var(--encre);border-color:var(--encre-3)}
 .ttl .oeil svg{width:14px;height:14px;display:block}
-#feed.masque-client th:nth-child(8),#feed.masque-client td:nth-child(8){display:none}
+#feed.masque-client th:nth-child(9),#feed.masque-client td:nth-child(9){display:none}
 #techs .row{cursor:pointer}
 #techs .row.off{opacity:.35}
 #techs .row.sel .nm{font-weight:600}
@@ -221,7 +222,7 @@ body.debug #gstat .dbg{display:inline}
 #feed td{padding:4px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--encre-2)}
 #feed td:nth-child(4),#feed td:nth-child(6),#feed td.cl{color:var(--encre)}
 #feed col.c-t{width:5.4em}#feed col.c-s{width:7.2em}#feed col.c-v{width:7em}#feed col.c-ip{width:9.4em}
-#feed col.c-p{width:10em}#feed col.c-cl{width:8em}#feed col.c-a{width:5.6em}
+#feed col.c-p{width:10em}#feed col.c-sv{width:11em}#feed col.c-cl{width:8em}#feed col.c-a{width:5.6em}
 #feed td.cl .cl-vide{color:var(--encre-3);font-style:italic}
 #feed .cl-tag{cursor:pointer;border-bottom:1px dotted var(--encre-3)}
 #feed .cl-tag:hover{border-bottom-color:currentColor}
@@ -270,7 +271,7 @@ body.debug #gstat .dbg{display:inline}
 @media (max-width:1250px){
   #wall.vert #bt{grid-template-columns:1fr 2.5fr}
   #feed col.c-a{width:0}
-  #feed th:nth-child(9),#feed td:nth-child(9){display:none}
+  #feed th:nth-child(10),#feed td:nth-child(10){display:none}
   #wall.vert #feed col.c-p{width:3em}
   #wall.vert #feed .pn{display:none}
   #wall.vert #frise .ttl{flex-wrap:wrap;row-gap:4px}
@@ -348,7 +349,7 @@ body.debug #wall.vert ~ #seam{display:block}
       <dl class="sub">
         <div><dd id="k2">0</dd><dt>bloquées</dt></div>
         <div><dd id="k3">0</dd><dt>pays d'origine</dt></div>
-        <div class="r"><dd id="k4">0</dd><dt>critiques ou élevées</dt></div>
+        <div class="r"><dd id="k4">0</dd><dt>critiques</dt></div>
       </dl>
       <div id="sevbar"></div>
       </div></div>
@@ -378,10 +379,10 @@ body.debug #wall.vert ~ #seam{display:block}
       <div id="tl"><svg id="spark" preserveAspectRatio="none"></svg>
         <div class="cur hov" id="tl-hov"></div><div class="cur lec" id="tl-lec"></div><div class="bulle" id="tl-bulle"></div></div>
       <div class="axis"><span id="ax0">0 h</span><span id="tl-aide"></span><span id="axh">--</span></div></section>
-    <section class="panel"><h3 class="ttl"><span class="dot" id="feedd"></span><span id="feedt">En direct</span><button type="button" class="oeil" id="cl-masque"></button><button type="button" class="filtre" id="filtre" hidden title="Retirer le filtre"></button><button type="button" class="filtre" id="filtre-cl" hidden title="Retirer le filtre client"></button><span class="pause" id="fpause" hidden>défilement : flux en pause, remonter pour reprendre</span></h3>
+    <section class="panel"><h3 class="ttl"><span class="dot" id="feedd"></span><span id="feedt">Dernières attaques</span><button type="button" class="oeil" id="cl-masque"></button><button type="button" class="filtre" id="filtre" hidden title="Retirer le filtre"></button><button type="button" class="filtre" id="filtre-cl" hidden title="Retirer le filtre client"></button><span class="pause" id="fpause" hidden>défilement : flux en pause, remonter pour reprendre</span></h3>
       <div id="feed"><table>
-        <colgroup><col class="c-t"><col class="c-s"><col class="c-v"><col class="c-ip"><col class="c-p"><col class="c-g"><col class="c-h"><col class="c-cl"><col class="c-a"></colgroup>
-        <thead><tr><th>Heure</th><th>Source</th><th>Sévérité</th><th>IP source</th><th>Pays</th><th>Technique</th><th>Cible</th><th>Client</th><th>Action</th></tr></thead>
+        <colgroup><col class="c-t"><col class="c-s"><col class="c-v"><col class="c-ip"><col class="c-p"><col class="c-g"><col class="c-h"><col class="c-sv"><col class="c-cl"><col class="c-a"></colgroup>
+        <thead><tr><th>Heure</th><th>Source</th><th>Sévérité</th><th>IP source</th><th>Pays</th><th>Technique</th><th>Cible</th><th>Service</th><th>Client</th><th>Action</th></tr></thead>
         <tbody id="feedb"></tbody></table></div></section>
   </div>
 </div>
@@ -992,7 +993,7 @@ const minuit = () => { const d = new Date(); d.setHours(0, 0, 0, 0); return +d; 
 function addDims(D, e){
   D.total++;
   if (e.action === "blocked") D.blocked++;
-  if (e.sev === "critical" || e.sev === "high") D.crit++;
+  if (e.sev === "critical") D.crit++;
   inc(D.sev, e.sev); inc(D.cty, e.country); inc(D.sig, e.sig);
   inc(D.tech, e.tech); inc(D.site, e.dc);
   const d = new Date(e.t);
@@ -1020,7 +1021,7 @@ function applyDaily(rows, finMs){
     else if (p === "act"){ if (v === "blocked") D.blocked = n; }
     else if (MAP[p]) D[MAP[p]][v] = n;
   }
-  D.crit = (D.sev.critical || 0) + (D.sev.high || 0);
+  D.crit = D.sev.critical || 0;
   DAILY_BASE = D; DAILY_END = Math.max(finMs || 0, m);
   // les evenements anterieurs au socle y sont deja : on les oublie
   let k = 0; while (k < LIVE.length && LIVE[k].t < DAILY_END) k++;
@@ -1063,7 +1064,7 @@ function donut(){                                 // barre de severite (ex-annea
     `<div class="stack">${SEVS.map(s => part(s) > 0
         ? `<i style="width:${(part(s)*100).toFixed(2)}%;background:${css[s]}"></i>` : "").join("")}</div>
      <div class="keys">${SEVS.map(s =>
-        `<div><em style="background:${css[s]}"></em>${SEVFR[s] || esc(s)} <b>${Math.round(part(s)*100)} %</b></div>`).join("")}</div>`;
+        `<div><em style="background:${css[s]}"></em>${SEVFR[s] || esc(s)} <b>${nf.format(DAILY.sev[s] || 0)}</b> <span class="pc">· ${Math.round(part(s)*100)} %</span></div>`).join("")}</div>`;
 }
 
 let FRISE = { m0: 0, span: 1 };                  // minuit et duree couverte (ms), pour le survol
@@ -1152,7 +1153,7 @@ function feed(){
   const grouper = list => {
     const g = new Map();
     for (const e of list){
-      const k = e.tech + "|" + e.srcIp + "|" + e.sig + "|" + e.host;
+      const k = e.tech + "|" + e.srcIp + "|" + e.sig + "|" + e.host + "|" + e.service;
       const r = g.get(k);
       if (r) r.n++; else g.set(k, {e, n: 1, k});
     }
@@ -1172,7 +1173,7 @@ function feed(){
     const vk = "∅" + (FILTRE || "");
     if (feedKey === vk) return;
     feedKey = vk; feedPrev = new Set();
-    $("feedb").innerHTML = '<tr><td colspan="8" class="feed-vide">' +
+    $("feedb").innerHTML = '<tr><td colspan="10" class="feed-vide">' +
       (FILTRE ? "Aucune attaque récente pour cette source." : "Aucune attaque pour l'instant.") + '</td></tr>';
     return;
   }
@@ -1194,7 +1195,7 @@ function feed(){
       <td><span class="tag ${srcCls(e.tech)}">${esc(e.tech)}</span></td>
       <td><span class="pill s-${sev}">${SEVFR[e.sev] || sev}</span></td>
       <td>${ipCell(e.srcIp)}</td><td title="${esc(e.country)}">${flag(e.country)}<span class="pn">${esc(e.country)}</span></td><td>${esc(e.sig)}${n > 1 ? ` <span class="n">× ${n}</span>` : ""}</td>
-      <td>${esc(e.host)}</td><td class="cl">${e.client ? `<span class="cl-tag" data-client="${esc(e.client)}">${esc(e.client)}</span>` : '<span class="cl-vide">à renseigner</span>'}</td><td class="${ac}">${ACTFR[e.action] || esc(e.action)}</td></tr>`;
+      <td>${esc(e.host)}</td><td title="${esc(e.service)}">${esc(e.service)}</td><td class="cl">${e.client ? `<span class="cl-tag" data-client="${esc(e.client)}">${esc(e.client)}</span>` : '<span class="cl-vide">à renseigner</span>'}</td><td class="${ac}">${ACTFR[e.action] || esc(e.action)}</td></tr>`;
   }).join("");
   feedPrev = new Set(keys);
 }
@@ -1440,7 +1441,7 @@ function seedDaily(){
     const e = makeEvent(0);
     DAILY.total++; 
     if (e.action === "blocked") DAILY.blocked++;
-    if (e.sev === "critical" || e.sev === "high") DAILY.crit++;
+    if (e.sev === "critical") DAILY.crit++;
     inc(DAILY.sev, e.sev); inc(DAILY.cty, e.country);
     inc(DAILY.sig, e.sig); inc(DAILY.tech, e.tech); inc(DAILY.site, e.dc);
   }
@@ -1605,7 +1606,7 @@ function rjUi(msg){
   $("rj").hidden = !REPLAY;
   $("friset").textContent = REPLAY ? "Relecture" : "Attaques aujourd'hui";
   $("rj-pause").textContent = RJ.pauseA ? "Reprendre" : "Pause";
-  $("feedt").textContent = REPLAY ? "Relecture de " + hhmm(RJ.debut) + " à " + hhmm(RJ.debut + TR) : "En direct";
+  $("feedt").textContent = REPLAY ? "Relecture de " + hhmm(RJ.debut) + " à " + hhmm(RJ.debut + TR) : "Dernières attaques";
   $("feedd").style.visibility = REPLAY ? "hidden" : "";
   if (!REPLAY){
     $("gcap").textContent = "Attaques des 5 dernières minutes, nouveau lot dans";

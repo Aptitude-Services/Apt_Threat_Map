@@ -14,6 +14,8 @@ search index=threatmap sourcetype=bunkerweb "ModSecurity:"
 | rex field=_raw "(?:Total Score: |ANOMALY_SCORE' \(Value: .)(?<score>\d+)"
 | rex field=_raw ", server: (?<serveur>[^,]+),"
 | rex field=_raw ", host: \"(?<hote>[^\"]+)\""
+``` service = chemin demande, sans la query string (elle peut porter des jetons) ```
+| rex field=_raw "request: \"[A-Z]+ (?<chemin>[^\s?\"]+)"
 ``` une requete = plusieurs lignes (une par regle declenchee, puis le refus) reliees par
     unique_id : on garde une ligne par requete, avec la famille d'attaque la plus citee ```
 | eval src_ip = coalesce(ip_refus, ip_ligne), famille = if(famille == "generic", null(), famille)
@@ -42,6 +44,6 @@ search index=threatmap sourcetype=bunkerweb "ModSecurity:"
                        score_max >= 10 OR regles >= 3, "high",
                        score_max >= 5, "medium",
                        sev_min <= 2, "high", sev_min == 3, "medium", true(), "low")
-| eval dest_host = coalesce(hote, serveur), action = if(bloque == 1, "blocked", "detect"),
+| eval service = substr(chemin, 1, 80), dest_host = coalesce(hote, serveur), action = if(bloque == 1, "blocked", "detect"),
        dc = "AP1"
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action

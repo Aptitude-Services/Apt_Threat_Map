@@ -25,7 +25,7 @@ DEBUT, FIN = "-7m@m", "-2m@m"
 SEVERITES = ["critical", "high", "medium", "low", "informational"]
 # Champs d'un evenement, dans l'ordre ou la page les attend (docs/CONTRAT.md)
 CHAMPS = ["_time", "t", "Country", "src_lat", "src_lon", "src_ip", "dc", "dst_lat", "dst_lon",
-          "source_tech", "severity", "signature", "dest_host", "client", "action"]
+          "source_tech", "severity", "signature", "dest_host", "service", "client", "action"]
 
 
 def lire(chemin, mode="r"):
@@ -156,7 +156,7 @@ def q(s):
 
 def normalisation(cfg, src):
     """Suite ajoutee a la recherche de chaque source : ce que la page attend.
-    La source fournit _time, src_ip, dc, severity, signature, dest_host, action,
+    La source fournit _time, src_ip, dc, severity, signature, dest_host, action (et service, facultatif),
     et peut imposer Country / src_lat / src_lon (ex. origine masquee)."""
     sites = cfg["sites"]
     defaut = [s for s in sites if s["id"] == cfg["default_site"]][0]
@@ -179,7 +179,7 @@ def normalisation(cfg, src):
         % (coord("lat"), defaut["lat"], coord("lon"), defaut["lon"]),
         "| eval severity = lower(severity), severity = if(in(severity, %s), severity, \"medium\")"
         % ", ".join(q(x) for x in SEVERITES),
-        "| eval action = lower(coalesce(action, \"alerted\")), signature = coalesce(signature, %s), dest_host = coalesce(dest_host, \"\")"
+        "| eval action = lower(coalesce(action, \"alerted\")), signature = coalesce(signature, %s), dest_host = coalesce(dest_host, \"\"), service = coalesce(service, \"\")"
         % q(src["label"]),
         # client : pose par la source (ex. UTMStack), sinon table site (dest_host) -> client
         # (KV store wall_clients, jokers autorises). Vide = "a renseigner", affiche par la page.

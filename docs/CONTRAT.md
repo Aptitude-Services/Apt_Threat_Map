@@ -12,13 +12,14 @@ tourne toutes les 5 minutes sur la fenêtre `-7m@m → -2m@m`. Elle doit rendre
 | `severity` | oui | `critical`, `high`, `medium`, `low` ou `informational`, sans distinction de casse. Toute autre valeur compte en `medium` |
 | `signature` | oui | type d'attaque affiché (« SQL Injection », « Password spray »…). Vide : le libellé de la source |
 | `dest_host` | non | cible affichée dans le flux (hôte, domaine, application) |
+| `service` | non | service ou ressource visée, affiché dans le flux (chemin d'URL sans query string, protocole/port…) |
 | `action` | non | `blocked`, `allowed`, `alerted`, `detect`… (défaut : `alerted`) |
 | `Country`, `src_lat`, `src_lon` | non | à fournir seulement pour imposer l'origine, voir plus bas |
 
 Terminez la recherche par :
 
 ```
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action
 ```
 
 ## Ce que `build.py` ajoute

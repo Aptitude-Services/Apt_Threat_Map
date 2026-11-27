@@ -39,7 +39,7 @@ function versEvenement(x) {
     t: parseFloat(x.t) * 1000, country: x.Country || "",
     srcLat: vide(x.src_lat) ? NaN : +x.src_lat, srcLon: vide(x.src_lon) ? NaN : +x.src_lon,
     srcIp: x.src_ip || "", dc: x.dc, dstLat: +x.dst_lat, dstLon: +x.dst_lon,
-    tech: x.source_tech, sev: x.severity, sig: x.signature || "", host: x.dest_host || "",
+    tech: x.source_tech, sev: x.severity, sig: x.signature || "", host: x.dest_host || "", service: x.service || "",
     client: x.client || "", action: x.action
   };
 }
@@ -122,7 +122,7 @@ var SPL_DETAILS = 'search index=' + SUMMARY + ' search_name=wall_* search_name!=
   ' | eventstats max(search_now) as dernier_passage by search_name | where search_now == dernier_passage ' + UNIQUE_SH +
   // pas de prefixe "_" : Splunk masque ces champs dans les resultats
   ' | eval wall_src = search_name' +
-  ' | fields wall_src meta debut n t Country src_lat src_lon src_ip dc dst_lat dst_lon source_tech severity signature dest_host client action';
+  ' | fields wall_src meta debut n t Country src_lat src_lon src_ip dc dst_lat dst_lon source_tech severity signature dest_host service client action';
 
 function lecteur(id, spl, surLignes) {
   // 20 min : les deux derniers passages (fenetres -7m@m -> -2m@m). Pour le
@@ -161,7 +161,7 @@ function relireCumul() {
    compter des milliers de lignes pour quelques centaines d'arcs utiles. */
 var SPL_RELECTURE = 'search index=' + SUMMARY + ' search_name=wall_* search_name!=wall_cumul NOT meta=1 ' + UNIQUE_SH +
   ' | sort 0 t | streamstats count as rang by source_tech, signature, src_ip | where rang <= ' + BURST_CAP +
-  ' | fields t Country src_lat src_lon src_ip dc dst_lat dst_lon source_tech severity signature dest_host client action';
+  ' | fields t Country src_lat src_lon src_ip dc dst_lat dst_lon source_tech severity signature dest_host service client action';
 /* lecture d'une collection KV store par l'API REST (pas une recherche) */
 function kv(coll) {
   return fetch(splunkUtil.make_url("/splunkd/__raw/servicesNS/nobody/" + APP +
@@ -301,7 +301,7 @@ window.WALL_SOURCE = {
   rechercheUrl: function (debutMs) {
     var d = Math.floor(debutMs / 1000);
     var spl = 'search index=' + SUMMARY + ' search_name=wall_* search_name!=wall_cumul NOT meta=1 ' + UNIQUE_SH +
-      ' | table _time source_tech severity signature src_ip Country dest_host action dc search_name | sort 0 _time';
+      ' | table _time source_tech severity signature src_ip Country dest_host service action dc search_name | sort 0 _time';
     return splunkUtil.make_url("/app/" + APP + "/search") + "?q=" + encodeURIComponent(spl) +
       "&earliest=" + d + "&latest=" + (d + 300);
   },
@@ -362,7 +362,7 @@ window.WALL_SOURCE = {
             var n = parseInt(r.count, 10) || 0;
             d.total += n;
             if (r.action === "blocked") d.blocked += n;
-            if (r.severity === "critical" || r.severity === "high") d.crit += n;
+            if (r.severity === "critical") d.crit += n;
             add(d.sev, r.severity, n); add(d.cty, r.Country, n); add(d.sig, r.signature, n);
             add(d.tech, r.source_tech, n); add(d.site, r.dc, n);
           });

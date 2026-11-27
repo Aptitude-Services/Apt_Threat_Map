@@ -143,7 +143,7 @@ The app address alone opens the configuration page.
 ### Reading the wall
 
 - **Header**: the analysts on duty and on call, the live status, the number of attacks in the last 5 minutes, and the local time.
-- **Today**: attacks since midnight, blocked attacks, source countries, critical or high attacks, and the severity split.
+- **Today**: attacks since midnight, blocked attacks, source countries, critical attacks, and the severity split.
 - **Map**: the attacks of the last 5 minutes. Each arc goes from the attacker's country to the targeted site; its colour gives the severity. Protected sites show their count for the day.
 - **Top countries, Attack techniques, By source**: rankings for the day.
 - **Live feed**: the latest events. Bursts (same source, IP, technique and target) are grouped as "× n". Sources marked as *priority* are pinned at the top for 30 minutes. Click an IP to check its reputation on AbuseIPDB.
