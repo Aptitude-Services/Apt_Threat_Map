@@ -175,7 +175,7 @@ body.debug #gstat .dbg{display:inline}
 .row .bar>i{display:block;height:100%;background:var(--encre-2);transition:width .6s ease}
 
 /* ---- bas : activite horaire et flux en direct ---- */
-#bt{grid-area:bt;display:grid;grid-template-columns:1fr 1.7fr;gap:14px;min-height:0}
+#bt{grid-area:bt;display:grid;grid-template-columns:400px 1fr;gap:14px;min-height:0}
 #spark{height:100%;width:100%;display:block}
 /* frise de la journee : survol, clic pour relire une tranche */
 #tl{position:relative;height:calc(100% - 52px)}
@@ -222,7 +222,7 @@ body.debug #gstat .dbg{display:inline}
 #feed td{padding:4px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--encre-2)}
 #feed td:nth-child(4),#feed td:nth-child(6),#feed td.cl{color:var(--encre)}
 #feed col.c-t{width:5.4em}#feed col.c-s{width:7.2em}#feed col.c-v{width:7em}#feed col.c-ip{width:9.4em}
-#feed col.c-p{width:10em}#feed.periode col.c-t{width:7.6em}#feed col.c-sv{width:11em}#feed col.c-cl{width:8em}#feed col.c-a{width:5.6em}
+#feed col.c-p{width:9.4em}#feed.periode col.c-t{width:7.6em}#feed col.c-sv{width:9.5em}#feed col.c-cl{width:8em}#feed col.c-a{width:5.6em}
 #feed td.cl .cl-vide{color:var(--encre-3);font-style:italic}
 #feed .cl-tag{cursor:pointer;border-bottom:1px dotted var(--encre-3)}
 #feed .cl-tag:hover{border-bottom-color:currentColor}
@@ -263,7 +263,7 @@ body.debug #gstat .dbg{display:inline}
 /* ecran du bas : quatre panneaux de pleine hauteur cote a cote, le flux en large */
 #wall.vert #lf,#wall.vert #rt{flex-direction:row}
 #wall.vert #lf>*,#wall.vert #rt>*{flex:1 1 0;min-width:0}
-#wall.vert #bt{grid-template-columns:1fr 2.6fr}
+#wall.vert #bt{grid-template-columns:1fr 3fr}
 /* fenetre etroite (ecran a forte mise a l'echelle) : la courbe du jour reste
    a cote du flux, plus etroite. Le flux cede la colonne Action (presque
    toujours "bloquee") et le nom du pays (drapeau seul, nom au survol) pour
