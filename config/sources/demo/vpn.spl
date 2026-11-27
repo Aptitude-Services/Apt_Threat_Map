@@ -21,4 +21,5 @@
 | eval dc = "DC-NORD",
        dest_host = mvindex(split("vpn.example.org,vpn-secours.example.org", ","), random() % 2),
        action = "blocked"
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| eval service = mvindex(split("VPN SSL/443,IPsec/500", ","), random() % 2)
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action

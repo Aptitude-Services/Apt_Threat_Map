@@ -21,4 +21,6 @@ search index=threatmap sourcetype="zabbix:problems"
 | eval src_ip = "0.0.0.0", Country = "Interne", src_lat = "", src_lon = "",
        action = "alerted",
        dc = "DC-NORD"
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+``` service = etiquette Zabbix "service" du probleme, si elle existe ```
+| eval service = mvindex('tags{}.value', mvfind('tags{}.tag', "^service$"))
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action

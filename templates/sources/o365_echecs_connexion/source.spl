@@ -16,4 +16,5 @@ search index=cloud sourcetype=o365:management:activity Operation=UserLoginFailed
 ``` cible : le domaine de l'identifiant tente (valeur choisie par l'attaquant : la page l'echappe) ```
 | eval dest_host = mvindex(split(UserId, "@"), 1), action = "blocked",
        dc = "CLOUD"
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| eval service = coalesce(Workload, "Microsoft 365")
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action

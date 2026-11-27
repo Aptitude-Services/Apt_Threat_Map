@@ -7,4 +7,5 @@ search index=mail final_action=discard "filter.routeDirection"=inbound signature
                        true(),                                      "medium")
 | eval src_ip = src, dest_host = dest, action = "blocked",
        dc = "CLOUD"
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| eval service = "SMTP"
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action

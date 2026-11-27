@@ -85,7 +85,7 @@ that returns **one event per attack** with these fields:
 | `action` | `blocked`, `allowed`, `alerted`, `detect`… (optional) |
 
 End it with
-`| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action`.
+`| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action`.
 `build.py` appends geolocation, site coordinates, normalisation and a control
 row. To force an origin (traffic relayed by a CDN or proxy), set `Country` to a
 label listed in `origins.masked_labels` and leave `src_lat`/`src_lon` empty.

@@ -21,4 +21,5 @@
 | eval dc = "CLOUD",
        dest_host = mvindex(split("example.org,filiale.example.org", ","), random() % 2),
        action = "blocked"
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| eval service = mvindex(split("SMTP/25,IMAP/993,SMTP/587", ","), random() % 3)
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action

@@ -12,4 +12,5 @@ search index=threatmap (sourcetype=fortiweb OR sourcetype=fwb_attack) type=attac
 | eval src_ip = src, dest_host = coalesce(http_host, dst),
        action = if(match(lower(action), "deny|block|erase|redirect"), "blocked", "alerted"),
        dc = "DC-NORD"
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| eval service = substr(coalesce(replace(url, "\?.*$", ""), upper(service)), 1, 80)
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action

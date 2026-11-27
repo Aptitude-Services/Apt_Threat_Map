@@ -257,6 +257,7 @@
   "=) : comptées en medium.": "): counted as medium.",
   "= % sans signature.": " % without signature.",
   "= % sans dest_host (colonne Cible vide).": " % without dest_host (empty Target column).",
+  "= % sans service (colonne Service vide).": " % without service (empty Service column).",
   ">Conforme</span> ": ">Compliant</span> ",
   "= événements, ": " events, ",
   "= IP distinctes, sévérités : ": " distinct IPs, severities: ",

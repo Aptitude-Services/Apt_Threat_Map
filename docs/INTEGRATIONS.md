@@ -141,5 +141,6 @@ Faites-lui poster au HEC un objet JSON, sourcetype `threatmap:event` :
 | `src_ip` (ou `src`) | IP de l'attaquant. Absente ou privée : origine « Interne », sans arc |
 | `severity` | `critical`, `high`, `medium`, `low`, `informational` |
 | `dest_host` (ou `dest`, `target`) | la cible |
+| `service` | service ou ressource visée (chemin d'URL, `SSH/22`…), facultatif |
 | `action` | `blocked`, `allowed`, `alerted` |
 | `dc` (ou `site`) | id du site visé ; sinon le site par défaut |

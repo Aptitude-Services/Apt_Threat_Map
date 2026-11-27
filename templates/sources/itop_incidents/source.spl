@@ -25,4 +25,5 @@ search index=threatmap sourcetype="itop:ticket"
 | eval src_ip = "0.0.0.0", Country = "Interne", src_lat = "", src_lon = "",
        action = "alerted",
        dc = "DC-NORD"
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| eval service = title
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action

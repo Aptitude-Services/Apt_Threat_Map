@@ -117,7 +117,7 @@ git pull && docker compose up -d --force-recreate
 
 ```
 index=summary search_name=wall_bunkerweb NOT meta=1
-| table _time, signature, severity, Country, src_ip, dest_host, action
+| table _time, signature, severity, Country, src_ip, dest_host, service, action
 ```
 
 Délais normaux après une attaque : 5 à 10 minutes pour l'arc et le flux

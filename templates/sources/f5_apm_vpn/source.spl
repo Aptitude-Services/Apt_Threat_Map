@@ -15,4 +15,5 @@ search index=vpn sourcetype=f5:bigip:apm:syslog
 | eval severity = case(rafale > 5, "critical", rafale > 2, "high", true(), "medium")
 | eval signature = "Refus VPN", dest_host = mvindex(portail, 0), action = "blocked",
        dc = "DC-NORD"
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| eval service = "VPN"
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action

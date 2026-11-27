@@ -9,4 +9,5 @@ search index=firewall sourcetype="cp_log:syslog" product=IPS attack=*
        severity = case(severity == "critical", "critical", severity == "high", "high", true(), "medium")
 | eval src_ip = src, dest_host = dest, action = "detect",
        dc = "DC-NORD"
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| eval service = case(isnotnull(proto) AND isnotnull(service), upper(proto) . "/" . service, isnotnull(service), service, true(), null())
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action

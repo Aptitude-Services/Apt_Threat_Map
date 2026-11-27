@@ -52,8 +52,8 @@ python3 build.py --verifier                      # contrôle de la configuration
 python3 build.py                                 # nouveau paquet
 ```
 
-Une source, c'est une recherche SPL qui fournit 7 champs : `_time, src_ip, dc,
-severity, signature, dest_host, action`. Le reste (géolocalisation,
+Une source, c'est une recherche SPL qui fournit 8 champs : `_time, src_ip, dc,
+severity, signature, dest_host, service, action`. Le reste (géolocalisation,
 coordonnées des sites, normalisation) est ajouté par `build.py`. Voir
 [docs/ADAPTER.md](docs/ADAPTER.md) et [docs/CONTRAT.md](docs/CONTRAT.md).
 

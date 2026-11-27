@@ -21,4 +21,5 @@
 | eval dc = if(r < 65, "CLOUD", "DC-SUD"),
        dest_host = mvindex(split("www.example.org,portail.example.org,api.example.org,recrutement.example.org", ","), random() % 4),
        action = "blocked"
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| eval service = mvindex(split("/,/login,/wp-login.php,/api/v1/users,/search,/admin", ","), random() % 6)
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action

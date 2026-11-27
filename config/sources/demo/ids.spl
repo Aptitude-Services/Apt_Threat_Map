@@ -21,4 +21,5 @@
 | eval dc = "DC-NORD",
        dest_host = mvindex(split("srv-web-01,srv-dmz-02,fw-ext-01", ","), random() % 3),
        action = if(r < 70, "detect", "blocked")
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| eval service = mvindex(split("SSH/22,RDP/3389,SMB/445,HTTP/80,DNS/53", ","), random() % 5)
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action

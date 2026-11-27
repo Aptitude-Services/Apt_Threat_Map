@@ -636,8 +636,8 @@ function ouvrirForm(doc, id) {
     '<label>Couleur<input type="color" id="f-color"></label>' +
     '<label>Regarder en arrière (min)<input type="text" id="f-lookback" inputmode="numeric" value="0"></label>' +
     '<label class="coche"><input type="checkbox" id="f-prio"> Prioritaire (épinglée en tête du flux)</label></div>' +
-    '<label class="bloc">Recherche de la source<textarea id="f-spl" spellcheck="false" placeholder="index=... sourcetype=...\n| eval ...\n| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action"></textarea></label>' +
-    '<p class="cf-conseil">Elle doit fournir <span class="mono">_time, src_ip, dc, severity, signature, dest_host, action</span> ' +
+    '<label class="bloc">Recherche de la source<textarea id="f-spl" spellcheck="false" placeholder="index=... sourcetype=...\n| eval ...\n| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action"></textarea></label>' +
+    '<p class="cf-conseil">Elle doit fournir <span class="mono">_time, src_ip, dc, severity, signature, dest_host, service, action</span> ' +
     '(docs/CONTRAT.md). Sites (champ dc) : <span class="mono">' + esc(SITES.join(", ")) + '</span>. La géolocalisation, ' +
     'les coordonnées des sites et la normalisation sont ajoutées automatiquement.</p>' +
     '<div id="f-res"></div>' +
@@ -1030,14 +1030,14 @@ function tester(nom, bouton) {
 
 /* Contrat d'une source (docs/CONTRAT.md) : la recherche de l'equipe, AVANT la
    normalisation ajoutee par build.py, doit fournir _time, src_ip, dc (un id de
-   site), severity, signature, dest_host, action. Controle sur la derniere heure. */
+   site), severity, signature, dest_host, service, action. Controle sur la derniere heure. */
 function controleContrat(source) {
   var sites = SITES.map(function (x) { return '"' + x + '"'; }).join(", ");
   var spl = source + ' | eval _ip = if(isnull(src_ip) OR src_ip="", 1, 0), _site = if(in(dc, ' + sites + '), 0, 1),' +
     ' _sev = if(in(lower(severity), "critical", "high", "medium", "low", "informational"), 0, 1),' +
-    ' _sig = if(isnull(signature) OR signature="", 1, 0), _cible = if(isnull(dest_host) OR dest_host="", 1, 0)' +
+    ' _sig = if(isnull(signature) OR signature="", 1, 0), _cible = if(isnull(dest_host) OR dest_host="", 1, 0), _service = if(isnull(service) OR service="", 1, 0)' +
     ' | stats count, sum(_ip) as sans_ip, sum(_site) as site_inconnu, values(eval(if(_site=1, dc, null()))) as sites_inconnus,' +
-    ' sum(_sev) as sev_invalide, values(severity) as severites, sum(_sig) as sans_sig, sum(_cible) as sans_cible, dc(src_ip) as ips';
+    ' sum(_sev) as sev_invalide, values(severity) as severites, sum(_sig) as sans_sig, sum(_cible) as sans_cible, sum(_service) as sans_service, dc(src_ip) as ips';
   return chercher(/^\s*(\||search\s)/.test(spl) ? spl : "search " + spl, "-60m", "now").then(function (r) {
     var x = r.rows[0] || {}, n = +x.count || 0, pb = [];
     var pct = function (k) { return n ? Math.round(100 * (+x[k] || 0) / n) : 0; };
@@ -1049,6 +1049,7 @@ function controleContrat(source) {
       [].concat(x.severites || []).join(", ") + ") : comptées en medium."]);
     if (+x.sans_sig) pb.push(["att", pct("sans_sig") + " % sans signature."]);
     if (+x.sans_cible) pb.push(["info", pct("sans_cible") + " % sans dest_host (colonne Cible vide)."]);
+    if (+x.sans_service) pb.push(["info", pct("sans_service") + " % sans service (colonne Service vide)."]);
     var html = (pb.length ? pb.map(function (p) {
       return '<div><span class="e e-' + p[0] + '">' + LIB_ETAT[p[0]] + '</span> ' + esc(p[1]) + '</div>';
     }).join("") : '<span class="e e-ok">Conforme</span> ') + '<div class="cf-conseil">' + nf.format(n) +

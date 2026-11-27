@@ -29,4 +29,6 @@ search index=threatmap sourcetype="utmstack:alert"
        src_lon = if(interne == 1, "", src_lon)
 | eval action = "alerted",
        dc = "DC-NORD"
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| eval port = coalesce('target.port', 'destination.port'), proto = coalesce(protocol, 'target.protocol')
+| eval service = case(isnotnull(proto) AND isnotnull(port), upper(proto) . "/" . port, isnotnull(port), port, isnotnull(proto), upper(proto), true(), null())
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action

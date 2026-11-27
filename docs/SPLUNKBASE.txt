@@ -75,7 +75,7 @@ SOC Attack Wall gives you a readable, always-on view of **your** attacks, built 
   - **analysts and schedule**: photos, and a two-week duty roster that you can paste straight from Excel;
   - **search status and troubleshooting**: last runs, durations, skipped runs, and Splunk errors related to the app, with explanations for known issues.
 - **Source templates** are included for common products: Ubika WAF, Check Point IPS, Proofpoint, Microsoft 365 / Entra ID sign-in failures, and F5 BIG-IP APM VPN denials.
-- **A simple contract.** A source only needs to return `_time, src_ip, dc, severity, signature, dest_host, action`. Geolocation, site coordinates and normalisation are added automatically.
+- **A simple contract.** A source only needs to return `_time, src_ip, dc, severity, signature, dest_host, service, action`. Geolocation, site coordinates and normalisation are added automatically.
 
 ### Requirements
 
@@ -177,7 +177,7 @@ Sources can later be **edited**, **disabled** or **deleted** from the same table
 Your search must return one event per attack, and end with:
 
 ```
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action
 ```
 
 | Field | Content |

@@ -19,4 +19,5 @@ search index=waf sourcetype=ubika "ICX Engine" src=* app=*
        src_lat = if(masque == 1, "", src_lat),
        src_lon = if(masque == 1, "", src_lon)
 | eval dest_host = replace(app, "-\d+(\s*#\d+)?$", ""), action = "blocked"
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| eval service = coalesce(replace(uri, "\?.*$", ""), "Web")
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action

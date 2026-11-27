@@ -4,7 +4,7 @@ search index=threatmap sourcetype="threatmap:event"
     Pour un produit sans modele : il envoie un objet JSON avec les champs ci-dessous,
     tous facultatifs sauf signature.
       src_ip (ou src), signature (ou name, title), severity, dest_host (ou dest, target),
-      action, dc (ou site)
+      action, dc (ou site), service (chemin, protocole/port, application visee)
     Sans IP publique : origine "Interne", sans arc sur la carte. Ajoutez "Interne" a
     origins.masked_labels dans la configuration. ```
 | spath
@@ -22,4 +22,4 @@ search index=threatmap sourcetype="threatmap:event"
        Country = if(interne == 1, "Interne", Country),
        src_lat = if(interne == 1, "", src_lat),
        src_lon = if(interne == 1, "", src_lon)
-| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, action
+| fields _time, src_ip, Country, src_lat, src_lon, dc, severity, signature, dest_host, service, action
